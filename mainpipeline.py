@@ -13,7 +13,7 @@ from data_handling.utils.sheet_utils import (
     update_google_sheets_pipeline
 )
 
-from data_handling.forecast_runner import update_all_forecasts
+from ml_pipeline.save_predictions import update_all_forecasts
 
 
 # ----------------------------

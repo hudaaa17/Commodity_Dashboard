@@ -1,0 +1,17 @@
+pandas==2.2.2
+numpy==1.26.4
+
+requests==2.32.3
+
+beautifulsoup4==4.12.3
+
+selenium==4.21.0
+webdriver-manager==4.0.2
+
+xgboost==2.0.3
+scikit-learn==1.5.1
+
+google-api-python-client==2.137.0
+google-auth==2.30.0
+
+python-dotenv==1.0.1

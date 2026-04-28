@@ -2,6 +2,7 @@
 # LOAD ENV (IMPORTANT for local + GitHub)
 # ----------------------------
 from dotenv import load_dotenv
+import os
 load_dotenv()
 
 # ----------------------------

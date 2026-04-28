@@ -1,19 +1,34 @@
+# ----------------------------
+# LOAD ENV (IMPORTANT for local + GitHub)
+# ----------------------------
+from dotenv import load_dotenv
+load_dotenv()
+
+# ----------------------------
+# IMPORTS
+# ----------------------------
 from data_handling.pipeline import run_webscraping_pipeline
 from data_handling.utils.sheet_utils import (
     prepare_sheet_rows,
     update_google_sheets_pipeline
 )
 
-from ml_pipeline.save_predictions import update_all_forecasts
+from data_handling.forecast_runner import update_all_forecasts
 
 
-RAW_SPREADSHEET_ID = "1f62apNh7suBrreq_bWE57MvtJFazO_3ZEBTtk9-VBC4"
-TRAINING_SPREADSHEET_ID = "1SdojAWIDyX5CEYbUHU5JqjE3iIm-r4mjyWevSmeS0Uc"
+# ----------------------------
+# CONFIG
+# ----------------------------
+RAW_SPREADSHEET_ID = os.getenv("RAW_SPREADSHEET_ID")
+TRAINING_SPREADSHEET_ID = os.getenv("TRAINING_SPREADSHEET_ID")
 
 
+# ----------------------------
+# MAIN PIPELINE
+# ----------------------------
 def main():
 
-    print("🚀 STARTING FULL PIPELINE\n")
+    print("\n🚀 STARTING FULL PIPELINE\n")
 
     # ----------------------------
     # 1. WEB SCRAPING PIPELINE
@@ -23,6 +38,9 @@ def main():
 
         data = run_webscraping_pipeline()
 
+        if not data:
+            raise ValueError("No data returned from scraping")
+
         rows = prepare_sheet_rows(data)
 
         status = update_google_sheets_pipeline(
@@ -31,11 +49,19 @@ def main():
             TRAINING_SPREADSHEET_ID
         )
 
-        print("📊 Data pipeline status:", status)
+        print(f"📊 Data pipeline status: {status}")
 
     except Exception as e:
         print(f"❌ Web scraping pipeline failed: {e}")
-        return   # STOP — ML should NOT run without fresh data
+        print("⛔ Stopping pipeline — ML will NOT run")
+        return
+
+    # ----------------------------
+    # OPTIONAL: Skip ML if no new data
+    # ----------------------------
+    if status == "exists":
+        print("⚠️ No new data → skipping ML forecast step")
+        return
 
     # ----------------------------
     # 2. ML FORECAST PIPELINE
@@ -50,8 +76,11 @@ def main():
     except Exception as e:
         print(f"❌ ML pipeline failed: {e}")
 
-    print("\n✅ FULL PIPELINE COMPLETED")
+    print("\n✅ FULL PIPELINE COMPLETED\n")
 
 
+# ----------------------------
+# ENTRY POINT
+# ----------------------------
 if __name__ == "__main__":
     main()

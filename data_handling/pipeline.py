@@ -22,7 +22,7 @@ from data_handling.processors.zinc_oxide import compute_zinc_oxide
 # ----------------------------
 # Sheet Loader (for ZnO)
 # ----------------------------
-from data_handling.utils.sheet_utils import load_sheet   
+from data_handling.utils.sheet_utils import load_sheet, get_sheets_service
 
 
 # ----------------------------

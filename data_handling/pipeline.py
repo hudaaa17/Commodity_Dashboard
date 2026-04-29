@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+import os
 import pandas as pd
 
 from data_handling.utils.fx import get_all_rates

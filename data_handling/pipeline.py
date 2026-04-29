@@ -44,9 +44,8 @@ load_dotenv()
 
 
 
-RAW_SPREADSHEET_ID = "1f62apNh7suBrreq_bWE57MvtJFazO_3ZEBTtk9-VBC4"
-TRAINING_SPREADSHEET_ID = "1SdojAWIDyX5CEYbUHU5JqjE3iIm-r4mjyWevSmeS0Uc"
-
+RAW_SPREADSHEET_ID = os.environ.get("RAW_SPREADSHEET_ID")
+TRAINING_SPREADSHEET_ID = os.environ.get("TRAINING_SPREADSHEET_ID")
 
 
 
@@ -90,7 +89,8 @@ def run_webscraping_pipeline():
     # 4. Derived: Zinc Oxide
     # ----------------------------
     try:
-        dross_df = load_sheet("zincdross")  # historical data
+        service = get_sheets_service()
+        dross_df = load_sheet(service, TRAINING_SPREADSHEET_ID, "zincdross")  # historical data
         zinc_oxide = compute_zinc_oxide(dross_df, rates)
     except Exception as e:
         zinc_oxide = {

@@ -9,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from data_handling.utils.format import format_price
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 RUBBER_SOURCE = "https://rubberboard.gov.in/public?lang=E"
 
@@ -21,28 +23,21 @@ def fetch_rubber_price():
         options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1920,1080")  # add this
-        options.add_argument("--disable-extensions")     # add this
-
-        # Use system Chrome/Chromium instead of webdriver_manager
-        chrome_bin = os.environ.get("CHROME_PATH", "/usr/bin/chromium-browser")
-        chromedriver_bin = os.environ.get("CHROMEDRIVER_PATH", "/usr/bin/chromedriver")
-
-        options.binary_location = chrome_bin
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--disable-extensions")
 
         # Disable images (faster)
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
 
+        # Use webdriver_manager with Google Chrome
         driver = webdriver.Chrome(
-            service=Service(chromedriver_bin),
+            service=Service(ChromeDriverManager().install()),
             options=options
         )
 
         driver.get(RUBBER_SOURCE)
-
-        wait = WebDriverWait(driver, 20)  # increase from 10 → 20
-
+        wait = WebDriverWait(driver, 20)
         rows = wait.until(
             EC.presence_of_all_elements_located((By.XPATH, "//table//tr"))
         )
